@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Clientes</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 24px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        thead {
+            background: #e5e7eb;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-save { background: #2563eb; }
+        .btn-edit { background: #f59e0b; }
+        .btn-delete { background: #dc2626; }
+        .btn-logout { background: #6b7280; text-decoration: none; padding: 10px 14px; border-radius: 8px; color: white; }
+
+        .btn-clear {
+            background: #6b7280;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h2>CRUD de Clientes</h2>
+    <a class="btn-logout" th:href="@{/logout}">Cerrar sesión</a>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h3>Listado de clientes</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${clientes}">
+                <td th:text="${c.id}"></td>
+                <td th:text="${c.nombre}"></td>
+                <td th:text="${c.apellido}"></td>
+                <td th:text="${c.correo}"></td>
+                <td th:text="${c.telefono}"></td>
+                <td>
+                    <a th:href="@{/clientes/editar/{id}(id=${c.id})}">
+                        <button type="button" class="btn-edit">Editar</button>
+                    </a>
+                    <a th:href="@{/clientes/eliminar/{id}(id=${c.id})}"
+                       onclick="return confirm('¿Deseas eliminar este cliente?')">
+                        <button type="button" class="btn-delete">Eliminar</button>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3 th:text="${editando} ? 'Editar cliente' : 'Nuevo cliente'"></h3>
+
+        <form th:action="${editando} ? @{/clientes/actualizar} : @{/clientes}"
+              th:object="${cliente}"
+              method="post">
+
+            <input type="hidden" th:field="*{id}" />
+
+            <label>Nombre</label>
+            <input type="text" th:field="*{nombre}" required />
+
+            <label>Apellido</label>
+            <input type="text" th:field="*{apellido}" required />
+
+            <label>Correo</label>
+            <input type="text" th:field="*{correo}" required />
+
+            <label>Teléfono</label>
+            <input type="text" th:field="*{telefono}" required />
+
+            <button type="submit" class="btn-save"
+                    th:text="${editando} ? 'Actualizar' : 'Guardar'"></button>
+            <button type="button" class="btn-clear" onclick="window.location.href='/clientes'">
+                Limpiar
+            </button>
+        </form>
+    </div>
+</div>
+
+<script th:if="${mensaje}">
+    alert('[[${mensaje}]]');
+</script>
+</body>
+</html>
